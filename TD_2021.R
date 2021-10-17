@@ -71,7 +71,8 @@ fviz_pca_var(res.pca, col.var = "contrib",
 #graph des individus
 #axe 1 et 2
 fviz_pca_ind(res.pca, geom = "point",alpha.ind=.1) +theme_minimal()
-ncp.retenu=5
+
+ncp.retenu=2
 
 #kmeans ----
 #on retient deux axes de l'ACP
@@ -86,12 +87,11 @@ clusters$size #taille des clusters
 # graph des individus, en fonction des dimensions 1 et 2 de l'ACP
 fviz_cluster(clusters, data = df.kmeans,geom="point")
 
-
 #elbow----
 #on créé une fonction qui retourne la variance intra pour une valeur de k
 kmean_withinss <- function(k) {
   print(paste0("kmeans k:",k))
-  cluster <- kmeans(df.kmeans, k, nstart = 25)
+  cluster <- kmeans(df.kmeans, k, nstart = 50)
   return (cluster$tot.withinss)
 }
 # Set maximum cluster 
@@ -105,7 +105,6 @@ ggplot(elbow, aes(x = X2.max_k, y = wss)) +
   geom_point() +
   geom_line() +
   scale_x_continuous(breaks = seq(1, max_k, by = 1))
-
 
 #silhouette----
 # function to compute average silhouette for k clusters
@@ -127,10 +126,10 @@ ggplot(silhouette, aes(x = X2.max_k, y = avg.silhouette)) +
   geom_line() +
   scale_x_continuous(breaks = seq(1, max_k, by = 1))
 
-k.retenu=11
+k.retenu=6
 
 
-# kmeans 11 clusters ----
+# kmeans ----
 cluster.2 <- kmeans(df.kmeans, k.retenu, nstart = 25)
 cluster.2$size
 # graph des individus, en fonction des dimensions 1 et 2 de l'ACP
@@ -138,16 +137,15 @@ fviz_cluster(cluster.2, data = df.kmeans,geom="point")
 s<-silhouette(cluster.2$cluster, dist(df.kmeans))
 fviz_silhouette(s)
 
-
 # ajout du résultat du clustering à la base initiale
 # calcul des moyennes des variables et non pas des coordonnées sur les axes de l'ACP
 player.clustered <-fifa_data %>%
   mutate(cluster = cluster.2$cluster)
+
 stats<-player.clustered %>% 
   group_by(cluster) %>%
   summarise_all("mean")
 stats %>% glimpse
-
 
 # affichage sous forme de heatmap
 stats.reshaped<-reshape2::melt(stats, id.vars=c("cluster"))

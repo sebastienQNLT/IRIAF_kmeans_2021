@@ -23,7 +23,6 @@ fifa_data<-read.csv2("https://raw.githubusercontent.com/sebastienQNLT/IRIAF_kmea
 dim(fifa_data)
 fifa_data %>% glimpse
 
-
 #scaling des donnees----
 #on conserve que les données numériques
 fifa_data.scaled<-fifa_data %>% select_if(is.numeric) %>% 
@@ -101,6 +100,7 @@ avg_sil <- function(k) {
   ss <- silhouette(km.res$cluster, dist(df.kmeans))
   return(mean(ss[, 3]))
 }
+
 # Set maximum cluster 
 max_k <-15
 # Run algorithm over a range of k 
@@ -114,7 +114,7 @@ ggplot(silhouette, aes(x = X2.max_k, y = avg.silhouette)) +
   scale_x_continuous(breaks = seq(1, max_k, by = 1))
 
 
-k.retenu=8
+k.retenu=6
 
 # kmeans 8 clusters ----
 cluster.2 <- kmeans(df.kmeans, k.retenu, nstart = 25)
@@ -147,6 +147,3 @@ ggplot(data = stats.reshaped, aes(x = `stats$cluster`, y =variable, fill = value
 # verification de notre clustering avec la position reelle des joueurs
 p <-  ggplot(player.clustered, aes(team_position))  + geom_bar() +  facet_grid(. ~ cluster)
 ggplotly(p)
-
-
-
