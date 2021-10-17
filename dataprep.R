@@ -20,6 +20,7 @@ fifa_data <- read.csv2("./players_21.csv",sep=',') %>%
             rwb,lb,lcb,                       
             cb,rcb,rb,ls,st,league_rank,international_reputation,weak_foot,defending_marking,
             league_name,club_name,nationality,
-            preferred_foot,skill_moves))
+            preferred_foot,skill_moves,
+            overall, wage_eur,value_eur,release_clause_eur))
 
 write.csv2(fifa_data,"./fifa_data.csv", row.names = FALSE)
